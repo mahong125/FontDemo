@@ -9,10 +9,13 @@
 import UIKit
 
 
-class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
+class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate {
 
     // MARK: - 定义常量
     let cellId = "FontIdentifier"
+    var isCustomContent = false
+    var customContent = ""
+    
     
     // MARK: - 懒加载
     lazy var mainTable: UITableView = {
@@ -33,6 +36,10 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         self.navigationItem.title = "元贝字体"
         self.view.backgroundColor = UIColor.white
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: Selector("setContent"))
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: Selector("setOrigin"))
+        
         let fonts = UIFont.familyNames
         
         sections = fonts.sorted(by: { (s1, s2) -> Bool in
@@ -48,18 +55,33 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
             dict[font] = arr
         }
 
-//        for (key,value) in dict {
-//            print("key is \(key) - value is \(value) \n")
-//            
-//        }
-        
-        
-        print(dict)
+//        print(dict)
         
         mainTable.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: cellId)
         self.view.addSubview(mainTable)
+    }
+    
+    /** set content */
+    func setContent() -> Void {
+//        print("111111")
         
-        
+        let alert : UIAlertView = UIAlertView.init(title: "输入内容", message:  nil, delegate: self, cancelButtonTitle: "OK")
+        alert.alertViewStyle = UIAlertViewStyle.plainTextInput;
+        alert.show()
+    }
+    
+    
+    func alertView(_ alertView: UIAlertView, clickedButtonAt buttonIndex: Int) {
+        let textView = alertView.textField(at: 0)
+        customContent = (textView?.text)!
+        isCustomContent = true
+        self.mainTable.reloadData()
+    }
+    
+    func setOrigin() -> Void {
+        customContent = ""
+        isCustomContent = false
+        self.mainTable.reloadData()
     }
     
     /** UITableView DataSource */
@@ -81,6 +103,7 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId)
+//        let cell = UITableViewCell.init(style: UITableViewCellStyle.value1, reuseIdentifier: cellId)
         
         let key = sections[indexPath.section]
         let values = dict[key]
@@ -92,10 +115,15 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         else{
             fontName = values?[indexPath.row]
         }
-        
         cell?.textLabel?.text = "字体名称:\(fontName!)) 字号:\(fontSize)"
         cell?.textLabel?.numberOfLines = 0
         cell?.textLabel?.font = UIFont.init(name: fontName!, size: fontSize)
+        
+        if (isCustomContent)
+        {
+            cell?.textLabel?.text = "\(customContent)\n字体:\(fontName!)"
+        }
+        
         return cell!
     }
     

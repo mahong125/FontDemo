@@ -36,9 +36,9 @@ class ViewController: UIViewController,UITableViewDataSource,UITableViewDelegate
         self.navigationItem.title = "元贝字体"
         self.view.backgroundColor = UIColor.white
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: Selector("setContent"))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.add, target: self, action: #selector(setContent))
         
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: Selector("setOrigin"))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: #selector(setOrigin))
         
         let fonts = UIFont.familyNames
         
